@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      /**
+       * @param {string} s
+       * @param {string} t
+       * @return {string}
+       * substr 已弃用 参数是start和len 从start开始截取len个字符返回
+       * substring 参数是start和end 如果start大于end 等于将两个数字翻转 注意不包括end字符
+       * slice 参数是start和end  注意不包括end字符
+       *
+       * substring的start如果小于0 那么视为0；如果end小于start将会替换
+       * substr的start如果小于0 那么等于从末尾开始截取；如果len小于0，那么视为0
+       * slice的end小于start 那么返回一个空字符串
+       *
+       */
+      var minWindow = function (s, t) {
+        if (s.length < t.length) return "";
+        /* 统计每个字符的欠债情况 可以理解为每个商品的欠债数额  */
+        const countMap = {};
+        let totalCount = 0;
+
+        // map看做一张负债表
+        for (const char of t) {
+          countMap[char] = countMap[char] ? countMap[char] - 1 : -1;
+          totalCount++;
+        }
+
+        let len = Number.MAX_SAFE_INTEGER;
+        let start = 0;
+
+        for (let left = 0, right = 0; right < s.length; right++) {
+          let cur = s[right];
+
+          countMap[cur] = countMap[cur] ? countMap[cur] + 1 : 1;
+
+          if (countMap[cur] <= 0) {
+            totalCount--;
+          }
+
+          // 说明此时窗口中已经满足条件了 此时需要缩小窗口
+          //   只要一次等于0 那么说明所有map中每一个key的最小值也是0 后面不会再小于0了
+          // 后续哪怕进来新的key 那么也会通过while的判断的判断条件来确保窗口中有必须包含的字符
+          /* 
+            1. 假设要将target中的字母移除窗口 那么必须满足当前字母在map中的频率大于1
+            只要map中对应的key不小于0 那么说明窗口中一定存在这个元素
+          */
+
+          if (totalCount === 0) {
+            // 一定是先修改值 然后修改left 否则会报错
+            // 尝试尽可能的缩小范围
+            while (countMap[s[left]] > 0) {
+              countMap[s[left]]--;
+              left++;
+            }
+
+            // 计算从a到b索引多少个元素 b-a+1
+            // 更新start和len
+            if (right - left + 1 < len) {
+              len = right - left + 1;
+              start = left;
+            }
+          }
+        }
+
+        // 一般题目设置了最大值的都要最后判断下 以防止特殊case
+        if (len === Number.MAX_SAFE_INTEGER) return "";
+        return s.substring(start, start + len);
+      };
+
+      console.log(minWindow("ADOBECODEBANC", "ABC"));
+    </script>
+  </body>
+</html>

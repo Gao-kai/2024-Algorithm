@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      /* 遍历循环数组 从start开始 */
+      function traverseArray(start, arr) {
+        let len = arr.length;
+
+        for (let i = start; i < 2 * len; i++) {
+          let currIndex = i % len;
+          if (start === currIndex && i >= len) {
+            break;
+          }
+
+          console.log(arr[currIndex]);
+        }
+      }
+
+      traverseArray(0, [1, 2, 3, 4]);
+      traverseArray(1, [1, 2, 3, 4]);
+      traverseArray(2, [1, 2, 3, 4]);
+      traverseArray(3, [1, 2, 3, 4]);
+    </script>
+    <script>
+      /**
+       * @param {number[]} gas
+       * @param {number[]} cost
+       * @return {number}
+       */
+      var canCompleteCircuit = function (gas, cost) {
+        let n = gas.length;
+        let windowCounter = 0;
+        let windowSum = 0;
+        let right = 0;
+        for (let left = 0; left < n; left++) {
+          // 如果进不来while说明窗口还要减小
+          while (windowSum >= 0) {
+            // 每次进入while循环意味着窗口+1 并且需要刷新窗口的总和 基于总和来判断是否要继续扩大还是缩小窗口
+            if (windowCounter === n) {
+              return left;
+            }
+            // 循环数组的过程中right不再通过++前进 而是通过取模前进
+            // right指针前进一位 说明在left作为起点 又可以扩大窗口
+            right = (left + windowCounter) % n;
+            windowCounter++;
+
+            // windowSum小于0则表示油不够到达对面
+            windowSum += gas[right] - cost[right];
+          }
+
+          windowCounter--;
+          windowSum -= gas[left] - cost[left];
+        }
+
+        return -1;
+      };
+
+      console.log(canCompleteCircuit([3, 3, 4], [3, 4, 4]));
+    </script>
+  </body>
+</html>

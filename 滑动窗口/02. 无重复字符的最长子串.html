@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <!-- 
+        1. 子串或者子数组代表连续
+        2. 滑动窗口一定要找单调性 比如随着窗口中正整数的增加 窗口中的和一定是增加的
+        3. 用一个结构map，map中的所有key就是当前窗口中的元素，map中key对应的value就是当前窗口中的元素对应的索引
+        4. 每当有重复元素进入窗口，先获取当前重复元素原来在map窗口中的索引，然后更新左边界的值为当前左边界+1和左边界的最大值
+        5. 为什么是左边界+1的最大值，因为左边界只能向前，如果向后意味着会有其他重复元素进入窗口
+
+        + 何时更新左边界？窗口变小
+        + 何时更新右边界？窗口变大
+        + 何时更新答案？
+     -->
+    <script>
+      /**
+       * @param {string} s
+       * @return {number}
+       */
+      var lengthOfLongestSubstring = function (s) {
+        let ans = Number.MIN_SAFE_INTEGER;
+        let map = new Map();
+
+        for (let left = 0, right = 0; right < s.length; right++) {
+          let curr = s[right];
+          if (map.has(curr)) {
+            let currIndexInWindow = map.get(curr);
+            // update left bound
+            left = Math.max(left, currIndexInWindow + 1);
+          }
+          map.set(curr, right);
+          // update the answer
+          ans = Math.max(ans, right - left + 1);
+        }
+
+        return ans === Number.MIN_SAFE_INTEGER ? 0 : ans;
+      };
+
+      console.log(lengthOfLongestSubstring("abcabcbb"));
+    </script>
+  </body>
+</html>

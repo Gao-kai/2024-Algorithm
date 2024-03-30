@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      /**
+       * @param {number} target
+       * @param {number[]} nums
+       * @return {number}
+       */
+      var minSubArrayLen1 = function (target, nums) {
+        let res = Number.MAX_SAFE_INTEGER;
+
+        for (let i = 0; i < nums.length; i++) {
+          let left = i;
+          let right = nums.length - 1;
+          let sum = 0;
+          while (left <= right) {
+            sum += nums[left];
+            left++;
+            if (sum >= target) {
+              res = Math.min(res, left - i);
+              break;
+            }
+          }
+        }
+
+        return res === Number.MAX_SAFE_INTEGER ? 0 : res;
+      };
+
+      /* 
+        1. 当某些变量需要在for循环中使用时，请将这些变量声明在for循环的变量声明语句中，而不是写在循环体中，这可以节省空间
+        2. right和left指针都是从0开始，然后这个过程中right每次遍历都会自增，而left则需要一定的条件满足才可以自增，
+        3. 不要在循环体中多些一次right++，如果一定要写就不要在条件判断语句中写
+        4.  if (sum >= target)的判断是为了防止所有累加和都小于target
+      */
+      var minSubArrayLen = function (target, nums) {
+        let res = Number.MAX_SAFE_INTEGER;
+
+        for (let left = 0, right = 0, sum = 0; right < nums.length; right++) {
+          sum += nums[right];
+
+          while (sum - nums[left] >= target) {
+            sum -= nums[left];
+            left++;
+          }
+
+          if (sum >= target) {
+            res = Math.min(res, right - left + 1);
+          }
+        }
+
+        return res === Number.MAX_SAFE_INTEGER ? 0 : res;
+      };
+
+      console.log(minSubArrayLen(7, [2, 3, 1, 2, 4, 3]));
+    </script>
+  </body>
+</html>
